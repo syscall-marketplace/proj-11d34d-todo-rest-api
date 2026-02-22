@@ -66,7 +66,12 @@ export function updateTodo(req: Request, res: Response): void {
   }
 
   const updated = todoStore.update(req.params.id, updates);
-  const response: ApiResponse<Todo> = { data: updated! };
+  if (!updated) {
+    const response: ApiResponse = { error: 'Todo not found' };
+    res.status(404).json(response);
+    return;
+  }
+  const response: ApiResponse<Todo> = { data: updated };
   res.status(200).json(response);
 }
 
@@ -78,5 +83,6 @@ export function deleteTodo(req: Request, res: Response): void {
     return;
   }
 
-  res.status(200).json({ data: { message: 'Todo deleted successfully' } });
+  const response: ApiResponse<{ message: string }> = { data: { message: 'Todo deleted successfully' } };
+  res.status(200).json(response);
 }
